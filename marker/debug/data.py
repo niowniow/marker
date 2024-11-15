@@ -94,6 +94,15 @@ def dump_bbox_debug_data(fname, pages: List[Page]):
     doc_base = os.path.basename(fname).rsplit(".", 1)[0]
 
     debug_file = os.path.join(settings.DEBUG_DATA_FOLDER, f"{doc_base}_bbox.json")
+
+    debug_data = get_bbox_data(pages)
+
+    with open(debug_file, "w+") as f:
+        json.dump(debug_data, f)
+    print(f"Dumped bbox debug data to {debug_file}")
+
+
+def get_bbox_data(pages: List[Page]):
     debug_data = []
     for idx, page_blocks in enumerate(pages):
         page_data = page_blocks.model_dump(exclude=["images", "layout", "text_lines"])
@@ -101,9 +110,8 @@ def dump_bbox_debug_data(fname, pages: List[Page]):
         page_data["text_lines"] = page_blocks.text_lines.model_dump(exclude=["heatmap", "affinity_map"])
         debug_data.append(page_data)
 
-    with open(debug_file, "w+") as f:
-        json.dump(debug_data, f)
-    print(f"Dumped bbox debug data to {debug_file}")
+    return debug_data
+
 
 
 
